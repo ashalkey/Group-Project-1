@@ -18,8 +18,6 @@ ui.start('#firebaseui-auth-container', {
     signInOptions: [
         firebase.auth.GoogleAuthProvider.PROVIDER_ID,
         firebase.auth.FacebookAuthProvider.PROVIDER_ID,
-        firebase.auth.TwitterAuthProvider.PROVIDER_ID,
-        firebase.auth.GithubAuthProvider.PROVIDER_ID,
         firebase.auth.EmailAuthProvider.PROVIDER_ID,
         firebase.auth.PhoneAuthProvider.PROVIDER_ID
     ], 
@@ -39,11 +37,23 @@ ui.start('#firebaseui-auth-container', {
           // ...
           // Finish sign-in after data is copied.
           return firebase.auth().signInWithCredential(cred);
+        },
+        uiShown: function() {
+            var guestListItem = $('<li>').addClass('firebaseui-list-item');
+            var guestLoginButton = $('<button>').addClass('btn btn-primary').text('Continue as Guest');
+            guestListItem.append(guestLoginButton);
+        
+        $('.firebaseui-idp-list').append(guestListItem);
+          
         }
       }
     });
 
+
+
 console.log(firebase.auth().currentUser);
+
+
 
 // $('#register').click(function () {
 //     var userEmail = $('#email').val().trim();
