@@ -9,12 +9,11 @@ var config = {
   };
   firebase.initializeApp(config);
 
-var provider = new firebase.auth.GoogleAuthProvider();
-
 var ui = new firebaseui.auth.AuthUI(firebase.auth());
 
 ui.start('#firebaseui-auth-container', {
-    signInSuccessUrl: 'alanTestRedirect.html',
+  signInFlow: 'popup',
+  signInSuccessUrl: 'alanTestRedirect.html',
     signInOptions: [
         firebase.auth.GoogleAuthProvider.PROVIDER_ID,
         firebase.auth.FacebookAuthProvider.PROVIDER_ID,
@@ -22,6 +21,17 @@ ui.start('#firebaseui-auth-container', {
         firebase.auth.PhoneAuthProvider.PROVIDER_ID
     ], 
     callbacks: {
+
+      signInSuccessWithAuthResult: function(authResult, signInSuccessUrl){
+        var user = authResult.user;
+        // var credential = authResult.credential;
+        // var isNewUser = authResult.additionalUserInfo.isNewUser;
+        // var providerID = authResult.additionalUserInfo.providerId;
+        // var operationType = authResult.operationType;
+        console.log(authResult);
+        writeUserData(user.uid);
+        return true;
+      },
         // signInFailure callback must be provided to handle merge conflicts which
         // occur when an existing credential is linked to an anonymous user.
         signInFailure: function(error) {
@@ -39,22 +49,36 @@ ui.start('#firebaseui-auth-container', {
           return firebase.auth().signInWithCredential(cred);
         },
         uiShown: function() {
-            var guestListItem = $('<li>').addClass('firebaseui-list-item');
-            var guestLoginButton = $('<button>').addClass('btn btn-primary').text('Continue as Guest');
-            guestListItem.append(guestLoginButton);
-        
-        $('.firebaseui-idp-list').append(guestListItem);
-          
+          document.getElementById('loader').style.display = 'none';
         }
       }
     });
 
+// var user = firebase.auth().currentUser;
 
+// // detect that a user has signed in or out
 
-console.log(firebase.auth().currentUser);
+// firebase.auth().onAuthStateChanged(function(user){
 
+//   if (user){
+//     console.log(user);
+//     console.log(user.uid);
+//     writeUserData(user.uid);
+//   }
+//   else{
+//     console.log("no user signed in");
+//   }
+// });
 
+//get a reference to the databse
+var database = firebase.database();
 
+function writeUserData(userID) {
+
+  database.ref('users/' + userID).set({
+    myUserID: userID
+  });
+}
 // $('#register').click(function () {
 //     var userEmail = $('#email').val().trim();
 //     var userPassword = $('#password').val().trim();
