@@ -22,6 +22,7 @@ function pluralVegetables(){
     }
 }
 
+pluralVegetables();
 
 // is an array that is going to holds an object
 var completeRecipe = [];
@@ -37,7 +38,7 @@ var offset = 0;
 // code bellow is only use to test the methods
 //-----------------------------------------------------------------------------------------------------------
 //value is obtain from the user. This array will be use to find how many ingridients match  the recipe
-var genSearch = ["chicken", "carrot", "eggplan", "kale", "bean", "tomato"];
+var genSearch = ["chicken", "carrot", "eggplan", "onion", "pepper", "tomato"];
 
 // value is obtain from the user if they want a specific ingridient chicken, beef, seafood, or vegetables.
 var mainIngredient = "meat"; 
@@ -135,24 +136,31 @@ function searchArray(array1, object){
 }
 
 
-// this function makes sure the api ingredientes split and push into an array
+// this function makes sure the api ingredients split and push into an array
+// x holds the value of the api ingredients 
 function format(x){
     var y = x.split(" ");
     var z = [];
 
     for(var i = 0; i<y.length; i++){
-    
-        if(y[i].indexOf(",")  == -1){
-            z.push(y[i]);
-        // console.log(y[i]);
-        }
-        else {
-            z.push(y[i].substring(0, y[i].length-1));
-        }
-    
+       
+        
+            if(y[i].indexOf(",")  == -1){
+                z.push(y[i]);
+            // console.log(y[i]);
+            }
+            else {
+            
+                //console.log(y[i].substring(0, y[i].length-1));
+                z.push(y[i].substring(0, y[i].length-1));
+                
+            }
+        
     }
+   // console.log(z);
     return z;
 }
+
 
 
  
