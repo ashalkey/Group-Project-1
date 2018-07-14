@@ -161,6 +161,4 @@ function format(x){
     return z;
 }
 
-
-
- 
+$('#submit-button').click(apiCall);
