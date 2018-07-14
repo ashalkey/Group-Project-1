@@ -54,6 +54,23 @@ ui.start('#firebaseui-auth-container', {
       }
     });
 
+var player;
+
+var ytApiKey = 'AIzaSyCovUogj28E2sli9kqZZ_AVJrEEL-1X5x4';
+var searchTerm = 'Roast Beef'
+var sQueryURL = 'https://www.googleapis.com/youtube/v3/search?part=snippet&key=' + ytApiKey + '&q='+ $.param(searchTerm);
+var vQueryURL = 'https://www.googleapis.com/youtube/v3/videos?part=snippet&key=' + ytApiKey + '&id=' + 'f3Wx4Ql7W3M';
+
+// to play video, get the id and input it as the v parameter in this url: https://www.youtube.com/watch?v=VideoIDGoesHere
+
+$.ajax({
+
+  url: vQueryURL,
+  method: 'GET'
+}).then(function(response){
+  console.log(response);
+
+});
 // var user = firebase.auth().currentUser;
 
 // // detect that a user has signed in or out
