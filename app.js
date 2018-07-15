@@ -32,60 +32,15 @@ var ingredientCount = 3;
 var offset = 0;
 
 
-
-
-//----------------------------------------------------------------------------------------------------------
-// code bellow is only use to test the methods
-//-----------------------------------------------------------------------------------------------------------
-//value is obtain from the user. This array will be use to find how many ingridients match  the recipe
-var genSearch = ["chicken", "carot", "eggplan", "oion", "peper", "tomaso"];
-
-// value is obtain from the user if they want a specific ingridient chicken, beef, seafood, or vegetables.
-var mainIngredient = "meat"; 
-
-//offset the results 
-var fromOffset = 0;
-
-var numOfResults = 5;
-
-
 //----------------------------------------------------------------------------------------------------------
 
 
 //keyword indicate if is chicken, beef, seafood or vegetable . 
-//if the user is doing a advance search pass the main ingredient
-// else pass "all"
+
 function apiCall(keyWord, searchIngredients){
-
-
-    var queryURL = "https://api.edamam.com/search?q="+ keyWord +
-                   "&app_id=17487a38&app_key=3fd9c70aefdd3c029f018cb69009d471&to=1000&from="+ offset +""
-    ;
-              
-    $.ajax({
-        url: queryURL,
-        method: 'GET'
-    }).then(function(response){
-
-        var r = response.hits[0].recipe; 
-
-        var obj = { primary: response.q,
-                    name: r.label,
-                    image: r.image,
-                    ingredients: r.ingredientLines,
-                    instructions: r.url
-        }
-        searchArray(searchIngredients, obj);        
-      
-    })
-
-}// end apicall
-
-//keyword indicate if is chicken, beef, seafood or vegetable . 
-//if the user is doing a advance search pass the main ingredient
-// else pass "all"
-function apiTopChoice(keyWord, searchIngredients){
-
+    var count = 0;
+    var i = 0;
+    var returnValue = 0;
 
     var queryURL = "https://api.edamam.com/search?q="+ keyWord +
                    "&app_id=17487a38&app_key=3fd9c70aefdd3c029f018cb69009d471&to=1000&from="+ offset +""
@@ -96,7 +51,7 @@ function apiTopChoice(keyWord, searchIngredients){
         method: 'GET'
     }).then(function(response){
 
-        var r = response.hits[0].recipe; 
+        var r = response.hits[i].recipe; 
 
         var obj = { primary: response.q,
                     name: r.label,
@@ -104,11 +59,22 @@ function apiTopChoice(keyWord, searchIngredients){
                     ingredients: r.ingredientLines,
                     instructions: r.url
         }
-        searchArray(searchIngredients, obj);        
+        count = searchArray(searchIngredients, obj);      
+        if(count === 1) {
+            commonVegetables.push(obj);
+            i++;
+            returnValue++;
+        }
+        else{
+            i++;
+        }
       
     })
 
+    return returnValue;
 }// end apicall
+
+
 
 //------------------------------------------------------------------------------------
 //array1 variable is the user input and the object contains the value of the api ingredients
@@ -137,6 +103,7 @@ function searchArray(array1, object){
     } 
     
    var x = equalIngredients(array1, tem);
+   return x;
 }
 
 // this function makes sure the api ingredients split and push into an array
@@ -219,6 +186,7 @@ function count(u, v){
  return count.length;
 }
 
+
 //----------------------------------------------------------------------------------------------------
 //general search will only give an array from the user which will be pass as useIinput 
 //the user than will get 3 recipe for each of: chicken, meat, seafood, vegetables.
@@ -233,14 +201,32 @@ function generalSearch(userinput){
 
     if(chickenCount !=3){
         //call api
-        apiCall("chiken", userinput);
+        chickenCount = apiCall("chicken", userinput);
 
-        //count+1;
+    }
+
+    if(meatCount !=3){
+        //call api
+        chickenCount = apiCall("meat", userinput);
+
+
+    }
+    if(seafoodCount !=3){
+        //call api
+        chickenCount = apiCall("seafood", userinput);
+
+    }
+
+    if(vegetableCount !=3){
+        //call api
+        chickenCount = apiCall("vegetables", userinput);
+
     }
 }
 
 
-$('#submit-button').on("click",function(){
+$('#submit-button').on("click", function(event){
+    event.preventDefault();
 
     var userInput = $('#input-search').val().trim();
 
@@ -249,5 +235,6 @@ $('#submit-button').on("click",function(){
     console.log(userInput);
     generalSearch(userArray);
 
-})
+});
 
+//$('#submit-button').click(apiCall);
