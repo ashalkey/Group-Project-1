@@ -13,7 +13,7 @@ var ui = new firebaseui.auth.AuthUI(firebase.auth());
 
 ui.start('#firebaseui-auth-container', {
   signInFlow: 'popup',
-  signInSuccessUrl: 'alanTestRedirect.html',
+  signInSuccessUrl: 'aneesIndex.html',
     signInOptions: [
         firebase.auth.GoogleAuthProvider.PROVIDER_ID,
         firebase.auth.FacebookAuthProvider.PROVIDER_ID,
@@ -57,35 +57,33 @@ ui.start('#firebaseui-auth-container', {
 var player;
 
 var ytApiKey = 'AIzaSyCovUogj28E2sli9kqZZ_AVJrEEL-1X5x4';
-var searchTerm = 'Roast Beef'
-var sQueryURL = 'https://www.googleapis.com/youtube/v3/search?part=snippet&key=' + ytApiKey + '&q='+ $.param(searchTerm);
-var vQueryURL = 'https://www.googleapis.com/youtube/v3/videos?part=snippet&key=' + ytApiKey + '&id=' + 'f3Wx4Ql7W3M';
+var searchTerm = {q: 'roast beef'};
+var sQueryURL = 'https://www.googleapis.com/youtube/v3/search?part=snippet&key=' + ytApiKey + '&' + $.param(searchTerm);
 
 // to play video, get the id and input it as the v parameter in this url: https://www.youtube.com/watch?v=VideoIDGoesHere
 
 $.ajax({
 
-  url: vQueryURL,
+  url: sQueryURL,
   method: 'GET'
 }).then(function(response){
   console.log(response);
-
+  console.log(sQueryURL);
 });
-// var user = firebase.auth().currentUser;
 
-// // detect that a user has signed in or out
+var user = firebase.auth().currentUser;
 
-// firebase.auth().onAuthStateChanged(function(user){
+// detect that a user has signed in or out
 
-//   if (user){
-//     console.log(user);
-//     console.log(user.uid);
-//     writeUserData(user.uid);
-//   }
-//   else{
-//     console.log("no user signed in");
-//   }
-// });
+firebase.auth().onAuthStateChanged(function(user){
+
+  if (user){
+    writeUserData(user.uid);
+  }
+  else{
+    console.log("no user signed in");
+  }
+});
 
 //get a reference to the databse
 var database = firebase.database();
@@ -96,57 +94,29 @@ function writeUserData(userID) {
     myUserID: userID
   });
 }
-// $('#register').click(function () {
-//     var userEmail = $('#email').val().trim();
-//     var userPassword = $('#password').val().trim();
-//     firebase.auth().createUserWithEmailAndPassword(userEmail, userPassword).catch(function(error) {
-//         // Handle Errors here.
-//         var errorCode = error.code;
-//         var errorMessage = error.message;
-//         console.log(errorCode + errorMessage);
-//         // ...
-//       });
 
-//       console.log(firebase.auth().currentUser);
-//       firebase.auth().onAuthStateChanged(user => {
-//         if(user) {
-//           window.location = 'alanTestRedirect.html'; //After successful login, user will be redirected to home.html
-//         }
-//       });
-// });
+var player;
+function onYouTubeIframeAPIReady(){
 
-// $('#sign-in').click(function () {
+  player = new YT.Player('player', {
+    videoId: 'M7lc1UVf-VE'
+  });
+}
 
-//     var userEmail = $('#email').val().trim();
-//     var userPassword = $('#password').val().trim();
-//     firebase.auth().signInWithEmailAndPassword(userEmail, userPassword).catch(function(error) {
-//         // Handle Errors here.
-//         var errorCode = error.code;
-//         var errorMessage = error.message;
-//         // ...
-//         console.log(errorCode + errorMessage);
-//       });
-// });
+var tag = document.createElement('script');
 
-// $('#google-sign-in').click(function () {
+tag.src = "https://www.youtube.com/iframe_api";
+var firstScriptTag = document.getElementsByTagName('script')[0];
+firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-//     firebase.auth()
-   
-//     .signInWithPopup(provider).then(function(result) {
-//        var token = result.credential.accessToken;
-//        var user = result.user;
-         
-//        console.log(token)
-//        console.log(user)
-//     }).catch(function(error) {
-//        var errorCode = error.code;
-//        var errorMessage = error.message;
-         
-//        console.log(error.code)
-//        console.log(error.message)
-//     });
-// });
+$('#search-button').click(function(){
 
+  var user = firebase.auth().currentUser;
+
+  database.ref('users/' + user.uid).update({
+      clicked: user.uid
+    });
+});
 
 
 
