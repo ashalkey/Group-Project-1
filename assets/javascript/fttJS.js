@@ -347,7 +347,9 @@ function generalSearch(userinput){
     
 }
 
+
 console.log(completeRecipe);
+
 
 $('#search-button').on("click",function(){
 
