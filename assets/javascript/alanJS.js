@@ -9,21 +9,29 @@ var config = {
   };
   firebase.initializeApp(config);
 
-var provider = new firebase.auth.GoogleAuthProvider();
-
 var ui = new firebaseui.auth.AuthUI(firebase.auth());
 
 ui.start('#firebaseui-auth-container', {
-    signInSuccessUrl: 'alanTestRedirect.html',
+  signInFlow: 'popup',
+  signInSuccessUrl: 'aneesIndex.html',
     signInOptions: [
         firebase.auth.GoogleAuthProvider.PROVIDER_ID,
         firebase.auth.FacebookAuthProvider.PROVIDER_ID,
-        firebase.auth.TwitterAuthProvider.PROVIDER_ID,
-        firebase.auth.GithubAuthProvider.PROVIDER_ID,
         firebase.auth.EmailAuthProvider.PROVIDER_ID,
         firebase.auth.PhoneAuthProvider.PROVIDER_ID
     ], 
     callbacks: {
+
+      signInSuccessWithAuthResult: function(authResult, signInSuccessUrl){
+        var user = authResult.user;
+        // var credential = authResult.credential;
+        // var isNewUser = authResult.additionalUserInfo.isNewUser;
+        // var providerID = authResult.additionalUserInfo.providerId;
+        // var operationType = authResult.operationType;
+        console.log(authResult);
+        writeUserData(user.uid);
+        return true;
+      },
         // signInFailure callback must be provided to handle merge conflicts which
         // occur when an existing credential is linked to an anonymous user.
         signInFailure: function(error) {
@@ -39,63 +47,77 @@ ui.start('#firebaseui-auth-container', {
           // ...
           // Finish sign-in after data is copied.
           return firebase.auth().signInWithCredential(cred);
+        },
+        uiShown: function() {
+          document.getElementById('loader').style.display = 'none';
         }
       }
     });
 
-console.log(firebase.auth().currentUser);
+var player;
 
-// $('#register').click(function () {
-//     var userEmail = $('#email').val().trim();
-//     var userPassword = $('#password').val().trim();
-//     firebase.auth().createUserWithEmailAndPassword(userEmail, userPassword).catch(function(error) {
-//         // Handle Errors here.
-//         var errorCode = error.code;
-//         var errorMessage = error.message;
-//         console.log(errorCode + errorMessage);
-//         // ...
-//       });
+var ytApiKey = 'AIzaSyCovUogj28E2sli9kqZZ_AVJrEEL-1X5x4';
+var searchTerm = {q: 'roast beef'};
+var sQueryURL = 'https://www.googleapis.com/youtube/v3/search?part=snippet&key=' + ytApiKey + '&' + $.param(searchTerm);
 
-//       console.log(firebase.auth().currentUser);
-//       firebase.auth().onAuthStateChanged(user => {
-//         if(user) {
-//           window.location = 'alanTestRedirect.html'; //After successful login, user will be redirected to home.html
-//         }
-//       });
-// });
+// to play video, get the id and input it as the v parameter in this url: https://www.youtube.com/watch?v=VideoIDGoesHere
 
-// $('#sign-in').click(function () {
+$.ajax({
 
-//     var userEmail = $('#email').val().trim();
-//     var userPassword = $('#password').val().trim();
-//     firebase.auth().signInWithEmailAndPassword(userEmail, userPassword).catch(function(error) {
-//         // Handle Errors here.
-//         var errorCode = error.code;
-//         var errorMessage = error.message;
-//         // ...
-//         console.log(errorCode + errorMessage);
-//       });
-// });
+  url: sQueryURL,
+  method: 'GET'
+}).then(function(response){
+  console.log(response);
+  console.log(sQueryURL);
+  onYouTubeIframeAPIReady();
+});
 
-// $('#google-sign-in').click(function () {
+var user = firebase.auth().currentUser;
 
-//     firebase.auth()
-   
-//     .signInWithPopup(provider).then(function(result) {
-//        var token = result.credential.accessToken;
-//        var user = result.user;
-         
-//        console.log(token)
-//        console.log(user)
-//     }).catch(function(error) {
-//        var errorCode = error.code;
-//        var errorMessage = error.message;
-         
-//        console.log(error.code)
-//        console.log(error.message)
-//     });
-// });
+// detect that a user has signed in or out
 
+firebase.auth().onAuthStateChanged(function(user){
+
+  if (user){
+    writeUserData(user.uid);
+  }
+  else{
+    console.log("no user signed in");
+  }
+});
+
+//get a reference to the databse
+var database = firebase.database();
+
+function writeUserData(userID) {
+
+  database.ref('users/' + userID).set({
+    myUserID: userID
+  });
+}
+
+var player;
+function onYouTubeIframeAPIReady(){
+
+  player = new YT.Player('player', {
+    videoId: 'M7lc1UVf-VE'
+  });
+}
+
+var tag = document.createElement('script');
+
+tag.src = "https://www.youtube.com/iframe_api";
+var firstScriptTag = document.getElementsByTagName('script')[0];
+firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+$('#search-button').click(function(){
+
+  var user = firebase.auth().currentUser;
+
+  database.ref('users/' + user.uid).update({
+      clicked: user.uid
+    });
+});
 
 
 
