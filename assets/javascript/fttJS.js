@@ -61,16 +61,17 @@ var searchTerm = {q: 'roast beef'};
 var sQueryURL = 'https://www.googleapis.com/youtube/v3/search?part=snippet&key=' + ytApiKey + '&' + $.param(searchTerm);
 
 // to play video, get the id and input it as the v parameter in this url: https://www.youtube.com/watch?v=VideoIDGoesHere
-
+function displayYouTubeVideo(queryURL){
 $.ajax({
 
-  url: sQueryURL,
+  url: queryURL,
   method: 'GET'
 }).then(function(response){
   console.log(response);
   console.log(sQueryURL);
   onYouTubeIframeAPIReady();
 });
+}
 
 var user = firebase.auth().currentUser;
 
@@ -347,7 +348,9 @@ function generalSearch(userinput){
     
 }
 
+
 console.log(completeRecipe);
+
 
 $('#search-button').on("click",function(){
 
