@@ -69,6 +69,7 @@ $.ajax({
 }).then(function(response){
   console.log(response);
   console.log(sQueryURL);
+  onYouTubeIframeAPIReady();
 });
 
 var user = firebase.auth().currentUser;
