@@ -120,6 +120,7 @@ firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 // });
 
 
+
 // most use vegetables. This array is use to search the api ingridients array and get only the vegetables 
 // from the api.
 var commonVegetables = ['artichoke','eggplant','asparagus','sprouts','beans','chickpeas','garbanzos', 
@@ -148,39 +149,26 @@ pluralVegetables();
 // is an array that is going to holds an object
 var completeRecipe = [];
 
-// variable controls the minimun ingridiants we want to have on a search
-var ingredientCount = 3;
 var offset = 0;
 
-
-
-
-//----------------------------------------------------------------------------------------------------------
-// code bellow is only use to test the methods
-//-----------------------------------------------------------------------------------------------------------
-//value is obtain from the user. This array will be use to find how many ingridients match  the recipe
-var genSearch = ["chicken", "carot", "eggplan", "oion", "peper", "tomaso"];
-
-// value is obtain from the user if they want a specific ingridient chicken, beef, seafood, or vegetables.
-var mainIngredient = "meat"; 
-
-//offset the results 
-var fromOffset = 0;
-
-var numOfResults = 5;
+var chickenCount = 0;
+var meatCount = 0;
+var seafoodCount = 0;
+var vegetableCount = 0;
 
 
 //----------------------------------------------------------------------------------------------------------
 
 
 //keyword indicate if is chicken, beef, seafood or vegetable . 
-//if the user is doing a advance search pass the main ingredient
-// else pass "all"
+
 function apiCall(keyWord, searchIngredients){
-
+    var count = 0;
+    var i = 0;
+    var returnValue = 0;
 
     var queryURL = "https://api.edamam.com/search?q="+ keyWord +
-                   "&app_id=17487a38&app_key=3fd9c70aefdd3c029f018cb69009d471&to=1000&from="+ offset +""
+                   "&app_id=fa7bd258&app_key=b36c8cc028e4fbcecf60788a8a784756&to=1000&from="+ offset +""
     ;
               
     $.ajax({
@@ -188,7 +176,7 @@ function apiCall(keyWord, searchIngredients){
         method: 'GET'
     }).then(function(response){
 
-        var r = response.hits[0].recipe; 
+        var r = response.hits[i].recipe; 
 
         var obj = { primary: response.q,
                     name: r.label,
@@ -196,46 +184,27 @@ function apiCall(keyWord, searchIngredients){
                     ingredients: r.ingredientLines,
                     instructions: r.url
         }
-        searchArray(searchIngredients, obj);        
-      
-    })
-
-}// end apicall
-
-//keyword indicate if is chicken, beef, seafood or vegetable . 
-//if the user is doing a advance search pass the main ingredient
-// else pass "all"
-function apiTopChoice(keyWord, searchIngredients){
-
-
-    var queryURL = "https://api.edamam.com/search?q="+ keyWord +
-                   "&app_id=17487a38&app_key=3fd9c70aefdd3c029f018cb69009d471&to=1000&from="+ offset +""
-    ;
-              
-    $.ajax({
-        url: queryURL,
-        method: 'GET'
-    }).then(function(response){
-
-        var r = response.hits[0].recipe; 
-
-        var obj = { primary: response.q,
-                    name: r.label,
-                    image: r.image,
-                    ingredients: r.ingredientLines,
-                    instructions: r.url
+        count = searchArray(searchIngredients, obj);      
+        if(count === 1 || returnValue === 3) {
+            completeRecipe.push(obj);
+            i++;
+            returnValue++;
         }
-        searchArray(searchIngredients, obj);        
+        else{
+            i++;
+        }
       
     })
-
+    console.log(completeRecipe);
+    return returnValue;
 }// end apicall
+
+
 
 //------------------------------------------------------------------------------------
 //array1 variable is the user input and the object contains the value of the api ingredients
 function searchArray(array1, object){
    
-    console.log(object);
     var tem = [];
     var temStr;
     var str;
@@ -258,6 +227,7 @@ function searchArray(array1, object){
     } 
     
    var x = equalIngredients(array1, tem);
+   return x;
 }
 
 // this function makes sure the api ingredients split and push into an array
@@ -288,8 +258,7 @@ function format(x){
 
 //finds out how many elements does the user input has that are equal to the api list
 function equalIngredients(userArray, apiArray){
-    console.log(apiArray);
-    console.log(userArray);
+ 
     var x =-1;
     var e = 0;
 
@@ -300,7 +269,7 @@ function equalIngredients(userArray, apiArray){
 
         else if(apiArray.length === 3 || apiArray.length === 4 ){
             e = count(userArray, apiArray);
-            console.log(e);
+           
             if(e >= 2 ){
                 x = 1;
             }
@@ -309,7 +278,7 @@ function equalIngredients(userArray, apiArray){
         else if(apiArray.length >= 5 ){
 
             e = count(userArray, apiArray);
-            console.log(e);
+            
             if(e >=3){
                x = 1;
             }
@@ -319,8 +288,7 @@ function equalIngredients(userArray, apiArray){
             x = -1;
         }
 
-   console.log(x);
-
+ 
     return x;
     
 }
@@ -336,9 +304,10 @@ function count(u, v){
 
         }
     }
-    console.log(count);
+   
  return count.length;
 }
+
 
 //----------------------------------------------------------------------------------------------------
 //general search will only give an array from the user which will be pass as useIinput 
@@ -347,19 +316,38 @@ function count(u, v){
 // and at least more then half matches the user input.
 //-----------------------------------------------------------------------------------------------------
 function generalSearch(userinput){
-    var chickenCount = 0;
-    var meatCount = 0;
-    var seafoodCount = 0;
-    var vegetableCount = 0;
+    
 
     if(chickenCount !=3){
         //call api
-        apiCall("chiken", userinput);
+        chickenCount = apiCall("chicken", userinput);
+        offset++;
 
-        //count+1;
     }
+
+    if(meatCount !=3){
+        //call api
+        meatCount = apiCall("meat", userinput);
+        offset++;
+
+    }
+    if(seafoodCount !=3){
+        //call api
+        seafoodCount = apiCall("seafood", userinput);
+        offset++;
+    }
+
+    if(vegetableCount !=3){
+        //call api
+        vegetableCount = apiCall("vegetables", userinput);
+        offset++;
+
+    }
+
+    
 }
 
+console.log(completeRecipe);
 
 $('#search-button').on("click",function(){
 
