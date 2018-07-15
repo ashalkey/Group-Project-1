@@ -207,19 +207,19 @@ function generalSearch(userinput){
 
     if(meatCount !=3){
         //call api
-        chickenCount = apiCall("meat", userinput);
+        meatCount = apiCall("meat", userinput);
 
 
     }
     if(seafoodCount !=3){
         //call api
-        chickenCount = apiCall("seafood", userinput);
+        seafoodCount = apiCall("seafood", userinput);
 
     }
 
     if(vegetableCount !=3){
         //call api
-        chickenCount = apiCall("vegetables", userinput);
+        vegetableCount = apiCall("vegetables", userinput);
 
     }
 }
