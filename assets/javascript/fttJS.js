@@ -113,6 +113,7 @@ firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
 // $('#search-button').click(function(){
 
+//     console.log('been clicked!');
 //   var user = firebase.auth().currentUser;
 
 //   database.ref('users/' + user.uid).update({
@@ -194,9 +195,9 @@ function apiCall(keyWord, searchIngredients){
         else{
             i++;
         }
-      
+        console.log(completeRecipe);
     })
-    console.log(completeRecipe);
+
     return returnValue;
 }// end apicall
 
@@ -349,9 +350,6 @@ function generalSearch(userinput){
 }
 
 
-console.log(completeRecipe);
-
-
 $('#search-button').on("click",function(){
 
     var userInput = $('#input-search').val().trim();
@@ -361,5 +359,5 @@ $('#search-button').on("click",function(){
     console.log(userInput);
     generalSearch(userArray);
 
-})
+});
 
