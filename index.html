@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+        crossorigin="anonymous">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.light_green-orange.min.css" />
+    <script src="https://developer.edamam.com/attribution/badge.js"></script>
+    <title>Group Project</title>
+</head>
+<body>
+    <nav class="navbar navbar-light bg-light">
+        <div class="logo">
+            <img id="logo" src="Assets/Logo Image.png">
+        </div>
+        <div class="col-lg-12">
+            <h2>Fridge To Table</h2>
+            <nav class="demo-navigation mdl-navigation" id="menu">
+                <a class="mdl-navigation__link" href="user_profile.html">
+                    <i class="material-icons">account_circle</i>User Profile</a>
+                <a class="mdl-navigation__link" href="recipes.html">
+                    <i class="material-icons">restaurant_menu</i>Recipes</a>
+                <a class="mdl-navigation__link" href="saved_recipes.html">
+                    <i class="material-icons">book</i>Saved Recipes</a>
+                <a class="mdl-navigation__link" href="weekly_meal_planner.html">
+                    <i class="material-icons">assignment</i>7 Day Planner</a>
+                <a class="mdl-navigation__link" href="healthtracker.html">
+                    <i class="material-icons">assessment</i>Health Tracker</a>
+                <a class="mdl-navigation__link" href="group.html">
+                    <i class="material-icons">group</i>Group Meal Planner</a>
+                <a class="mdl-navigation__link" href="HelpAndSupport.html">
+                    <i class="material-icons">help_outline</i>Help & Support</a>
+                <div class="mdl-layout-spacer"></div>
+                <a id="show-dialog" class="mdl-navigation__link">
+                    <i class="material-icons" role="presentation">cancel</i>Log Out</a>
+                <dialog class="mdl-dialog">
+                    <h4 class="mdl-dialog__content">Are you sure you want to log out?</h4>
+                    <div class="mdl-dialog__actions">
+                        <button type="button" class="mdl-button mdl-button--accent" onclick="dialog.close()">No</button>
+                        <button type="button" class="mdl-button close">Yes</button>
+                    </div>
+                </dialog>
+                <script>
+                    var dialog = document.querySelector('dialog');
+                    var showDialogButton = document.querySelector('#show-dialog');
+                    if (!dialog.showModal) {
+                        dialogPolyfill.registerDialog(dialog);
+                    }
+                    showDialogButton.addEventListener('click', function () {
+                        dialog.showModal();
+                    });
+                    dialog.querySelector('.close').addEventListener('click', function () {
+                        window.open('index.html', '_self');
+                    });
+                </script>
+            </nav>
+        </div>
+        </div>
+        </div>
+    </nav>
+    <div class="bigContainer">
+        <!-- <div class="sideBar">
+            <div class="container"> -->
+        <div class="row">
+            <div class="col-lg-2" id="side-panel">
+                <from id="recipe-form">
+                    <label for="">Search Ingredients</label>
+                    <br>
+                    <input type="text" id="add">
+                    <br>
+                    <input id="add-gif" type="submit" value="Search">
+                </from>
+                <div id="buttons"></div>
+                <div class="gif-view"></div>
+                <div class="card">
+                    <article class="card-group-item">
+                        <header class="card-header">
+                            <h6 class="title">Produce </h6>
+                        </header>
+                        <div class="filter-content">
+                            <div class="card-body">
+                                <form>
+                                    <label class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="">
+                                        <span class="form-check-label">
+                                            Mersedes Benz
+                                        </span>
+                                    </label>
+                                    <!-- form-check.// -->
+                                    <label class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="">
+                                        <span class="form-check-label">
+                                            Nissan Altima
+                                        </span>
+                                    </label>
+                                    <!-- form-check.// -->
+                                    <label class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="">
+                                        <span class="form-check-label">
+                                            Another Brand
+                                        </span>
+                                    </label>
+                                    <!-- form-check.// -->
+                                </form>
+                            </div>
+                            <!-- card-body.// -->
+                        </div>
+                    </article>
+                    <!-- card-group-item.// -->
+                    <article class="card-group-item">
+                        <header class="card-header">
+                            <h6 class="title">Dairy </h6>
+                        </header>
+                        <div class="filter-content">
+                            <div class="card-body">
+                                <form>
+                                    <label class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="">
+                                        <span class="form-check-label">
+                                            Mersedes Benz
+                                        </span>
+                                    </label>
+                                    <!-- form-check.// -->
+                                    <label class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="">
+                                        <span class="form-check-label">
+                                            Nissan Altima
+                                        </span>
+                                    </label>
+                                    <!-- form-check.// -->
+                                    <label class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="">
+                                        <span class="form-check-label">
+                                            Another Brand
+                                        </span>
+                                    </label>
+                                    <!-- form-check.// -->
+                                </form>
+                            </div>
+                            <!-- card-body.// -->
+                        </div>
+                    </article>
+                    <article class="card-group-item">
+                        <header class="card-header">
+                            <h6 class="title">Meat </h6>
+                        </header>
+                        <div class="filter-content">
+                            <div class="card-body">
+                                <form>
+                                    <label class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="">
+                                        <span class="form-check-label">
+                                            Mersedes Benz
+                                        </span>
+                                    </label>
+                                    <!-- form-check.// -->
+                                    <label class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="">
+                                        <span class="form-check-label">
+                                            Nissan Altima
+                                        </span>
+                                    </label>
+                                    <!-- form-check.// -->
+                                    <label class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="">
+                                        <span class="form-check-label">
+                                            Another Brand
+                                        </span>
+                                    </label>
+                                    <!-- form-check.// -->
+                                </form>
+                            </div>
+                            <!-- card-body.// -->
+                        </div>
+                    </article>
+                    <!-- card-group-item.// -->
+                </div>
+            </div>
+            <div class="imagDiv">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="container">
+                            <div class="row">
+                                <span id="title1">
+                                    <h3>Top Searched</h3>
+                                </span>
+                                <div class="col-lg-4">
+                                    <a href="https://placeholder.com">
+                                        <img src="http://via.placeholder.com/350x350">
+                                    </a>
+                                </div>
+                                <div class="col-lg-4">
+                                    <a href="https://placeholder.com">
+                                        <img src="http://via.placeholder.com/350x350">
+                                    </a>
+                                </div>
+                                <div class="col-lg-4">
+                                    <a href="https://placeholder.com">
+                                        <img src="http://via.placeholder.com/350x350">
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <span id="title2">
+                                    <h3>Recommended For You</h3>
+                                </span>
+                                <div class="col-lg-4">
+                                    <a href="https://placeholder.com">
+                                        <img src="http://via.placeholder.com/350x350">
+                                    </a>
+                                </div>
+                                <div class="col-lg-4">
+                                    <a href="https://placeholder.com">
+                                        <img src="http://via.placeholder.com/350x350">
+                                    </a>
+                                </div>
+                                <div class="col-lg-4">
+                                    <a href="https://placeholder.com">
+                                        <img src="http://via.placeholder.com/350x350">
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- </div> -->
+                    <!-- </div> -->
+                </div>
+                <!-- </div> -->
+                <!-- </div> -->
+                <footer>
+                
+                            <div class="badge" id="edamam-badge" data-color="white"></div>
+                        
+                </footer>
+</body>
+</html>
