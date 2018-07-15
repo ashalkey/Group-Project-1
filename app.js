@@ -27,9 +27,12 @@ pluralVegetables();
 // is an array that is going to holds an object
 var completeRecipe = [];
 
-// variable controls the minimun ingridiants we want to have on a search
-var ingredientCount = 3;
 var offset = 0;
+
+var chickenCount = 0;
+var meatCount = 0;
+var seafoodCount = 0;
+var vegetableCount = 0;
 
 
 //----------------------------------------------------------------------------------------------------------
@@ -43,7 +46,7 @@ function apiCall(keyWord, searchIngredients){
     var returnValue = 0;
 
     var queryURL = "https://api.edamam.com/search?q="+ keyWord +
-                   "&app_id=17487a38&app_key=3fd9c70aefdd3c029f018cb69009d471&to=1000&from="+ offset +""
+                   "&app_id=fa7bd258&app_key=b36c8cc028e4fbcecf60788a8a784756&to=1000&from="+ offset +""
     ;
               
     $.ajax({
@@ -60,8 +63,8 @@ function apiCall(keyWord, searchIngredients){
                     instructions: r.url
         }
         count = searchArray(searchIngredients, obj);      
-        if(count === 1) {
-            commonVegetables.push(obj);
+        if(count === 1 || returnValue === 3) {
+            completeRecipe.push(obj);
             i++;
             returnValue++;
         }
@@ -70,7 +73,7 @@ function apiCall(keyWord, searchIngredients){
         }
       
     })
-
+    console.log(completeRecipe);
     return returnValue;
 }// end apicall
 
@@ -80,7 +83,6 @@ function apiCall(keyWord, searchIngredients){
 //array1 variable is the user input and the object contains the value of the api ingredients
 function searchArray(array1, object){
    
-    console.log(object);
     var tem = [];
     var temStr;
     var str;
@@ -134,8 +136,7 @@ function format(x){
 
 //finds out how many elements does the user input has that are equal to the api list
 function equalIngredients(userArray, apiArray){
-    console.log(apiArray);
-    console.log(userArray);
+ 
     var x =-1;
     var e = 0;
 
@@ -146,7 +147,7 @@ function equalIngredients(userArray, apiArray){
 
         else if(apiArray.length === 3 || apiArray.length === 4 ){
             e = count(userArray, apiArray);
-            console.log(e);
+           
             if(e >= 2 ){
                 x = 1;
             }
@@ -155,7 +156,7 @@ function equalIngredients(userArray, apiArray){
         else if(apiArray.length >= 5 ){
 
             e = count(userArray, apiArray);
-            console.log(e);
+            
             if(e >=3){
                x = 1;
             }
@@ -165,8 +166,7 @@ function equalIngredients(userArray, apiArray){
             x = -1;
         }
 
-   console.log(x);
-
+ 
     return x;
     
 }
@@ -182,7 +182,7 @@ function count(u, v){
 
         }
     }
-    console.log(count);
+   
  return count.length;
 }
 
@@ -194,47 +194,50 @@ function count(u, v){
 // and at least more then half matches the user input.
 //-----------------------------------------------------------------------------------------------------
 function generalSearch(userinput){
-    var chickenCount = 0;
-    var meatCount = 0;
-    var seafoodCount = 0;
-    var vegetableCount = 0;
+    
 
     if(chickenCount !=3){
         //call api
         chickenCount = apiCall("chicken", userinput);
+        offset++;
 
     }
 
     if(meatCount !=3){
         //call api
         meatCount = apiCall("meat", userinput);
-
+        offset++;
 
     }
     if(seafoodCount !=3){
         //call api
         seafoodCount = apiCall("seafood", userinput);
-
+        offset++;
     }
 
     if(vegetableCount !=3){
         //call api
         vegetableCount = apiCall("vegetables", userinput);
+        offset++;
 
     }
+
+    
 }
 
 
-$('#submit-button').on("click", function(event){
+$('#add-gif').on("click", function(event){
     event.preventDefault();
 
-    var userInput = $('#input-search').val().trim();
+    var userInput = $('#Add').val().trim();
 
-    var userArray = userInput.split();
+    var userArray = userInput.split(" ");
 
     console.log(userInput);
     generalSearch(userArray);
 
 });
 
+
+console.log(completeRecipe);
 //$('#submit-button').click(apiCall);
