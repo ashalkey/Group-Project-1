@@ -45,3 +45,24 @@ h3 {
 .navbar-brand {
     margin-top: -215px;
 }
+
+#search{
+    margin: 5px;
+}
+
+#search-button{
+    margin-top: 5px;
+}
+
+#image{
+    margin: -25% 0 0 20%;
+}
+
+.bigContainer{
+    margin-bottom: 8%;
+}
+
+#one, #two, #three{
+    width: 350;
+    height: 350;
+}
