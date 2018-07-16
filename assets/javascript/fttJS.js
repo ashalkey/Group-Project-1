@@ -13,7 +13,7 @@ var ui = new firebaseui.auth.AuthUI(firebase.auth());
 
 ui.start('#firebaseui-auth-container', {
   signInFlow: 'popup',
-  signInSuccessUrl: 'aneesIndex.html',
+  signInSuccessUrl: 'aneesTest.html',
     signInOptions: [
         firebase.auth.GoogleAuthProvider.PROVIDER_ID,
         firebase.auth.FacebookAuthProvider.PROVIDER_ID,
@@ -54,71 +54,94 @@ ui.start('#firebaseui-auth-container', {
       }
     });
 
-var player;
 
-var ytApiKey = 'AIzaSyCovUogj28E2sli9kqZZ_AVJrEEL-1X5x4';
-var searchTerm = {q: 'roast beef'};
-var sQueryURL = 'https://www.googleapis.com/youtube/v3/search?part=snippet&key=' + ytApiKey + '&' + $.param(searchTerm);
+function displayYouTubeVideo(searchTerm) {
+    var ytApiKey = 'AIzaSyCovUogj28E2sli9kqZZ_AVJrEEL-1X5x4';
+    var searchObject = { q: searchTerm };
+    var sQueryURL = 'https://www.googleapis.com/youtube/v3/search?part=snippet&key=' + ytApiKey + '&' + $.param(searchObject);
+    $.ajax({
 
-// to play video, get the id and input it as the v parameter in this url: https://www.youtube.com/watch?v=VideoIDGoesHere
-function displayYouTubeVideo(queryURL){
-$.ajax({
+        url: sQueryURL,
+        method: 'GET'
+    }).then(function (response) {
+        // console.log(response);
+        // console.log(sQueryURL);
+        //   var player;
+        function onYouTubeIframeAPIReady() {
 
-  url: queryURL,
-  method: 'GET'
-}).then(function(response){
-  console.log(response);
-  console.log(sQueryURL);
-  onYouTubeIframeAPIReady();
-});
+            player = new YT.Player('player', {
+                videoId: response.items[0].id.videoId
+            });
+        }
+        onYouTubeIframeAPIReady();
+    });
 }
 
 var user = firebase.auth().currentUser;
 
 // detect that a user has signed in or out
 
-firebase.auth().onAuthStateChanged(function(user){
+firebase.auth().onAuthStateChanged(function (user) {
 
-  if (user){
-    writeUserData(user.uid);
-  }
-  else{
-    console.log("no user signed in");
-  }
+    if (user) {
+        writeUserData(user.uid);
+        //add event listener to the user ID node to detect when a recipe was clicked to add it to your recently searched recipes list
+        var user = firebase.auth().currentUser;
+        database.ref('users/' + user.uid).on('child_added', function (childSnapshot) {
+
+            console.log('recipe added');
+            console.log(childSnapshot);
+
+        });
+    }
+    else {
+        console.log("no user signed in");
+    }
 });
 
-//get a reference to the databse
+//create a reference to the databse
 var database = firebase.database();
 
 function writeUserData(userID) {
 
-  database.ref('users/' + userID).set({
-    myUserID: userID
-  });
+    database.ref('users/' + userID).set({
+        myUserID: userID
+    });
 }
 
-var player;
-function onYouTubeIframeAPIReady(){
-
-  player = new YT.Player('player', {
-    videoId: 'M7lc1UVf-VE'
-  });
-}
-
+//add YouTube Iframe API script tag
 var tag = document.createElement('script');
 
 tag.src = "https://www.youtube.com/iframe_api";
 var firstScriptTag = document.getElementsByTagName('script')[0];
 firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-// $('#search-button').click(function(){
 
-//   var user = firebase.auth().currentUser;
 
-//   database.ref('users/' + user.uid).update({
-//       clicked: user.uid
-//     });
-// });
+$('.recipe-img').click(function(){
+
+    var user = firebase.auth().currentUser;
+
+    var title = $(this).attr('name');
+    var src = $(this).attr('src');
+    var searchedRecipe = {
+        recipeTitle: title,
+        imgSrc: src
+    }
+
+    database.ref('users/' + user.uid).push(searchedRecipe);
+
+    $('#youtube-button').text('Click to watch how to make ' + title);
+    $('#youtube-button').click(function(){
+
+        displayYouTubeVideo(title);
+      var user = firebase.auth().currentUser;
+    
+      database.ref('users/' + user.uid).update({
+          clicked: user.uid
+        });
+    });
+});
 
 
 
@@ -163,42 +186,100 @@ var vegetableCount = 0;
 
 //keyword indicate if is chicken, beef, seafood or vegetable . 
 
-function apiCall(keyWord, searchIngredients){
-    var count = 0;
-    var i = 0;
-    var returnValue = 0;
 
-    var queryURL = "https://api.edamam.com/search?q="+ keyWord +
-                   "&app_id=fa7bd258&app_key=b36c8cc028e4fbcecf60788a8a784756&to=1000&from="+ offset +""
-    ;
-              
+function apiCall(keyWord, searchIngredients) {
+    var count = 0;
+
+
+
+    var queryURL = "https://api.edamam.com/search?q=" + keyWord +
+        "&app_id=fa7bd258&app_key=b36c8cc028e4fbcecf60788a8a784756&to=1000&from=" + offset + ""
+        ;
+
     $.ajax({
         url: queryURL,
         method: 'GET'
-    }).then(function(response){
+    }).then(function (response) {
 
-        var r = response.hits[i].recipe; 
+        for (var j = 0; j < 100; j++) {
 
-        var obj = { primary: response.q,
-                    name: r.label,
-                    image: r.image,
-                    ingredients: r.ingredientLines,
-                    instructions: r.url
+            var r = response.hits[j].recipe;
+
+            var obj = {
+                primary: response.q,
+                name: r.label,
+                image: r.image,
+                ingredients: r.ingredientLines,
+                instructions: r.url
+            }
+            count = searchArray(searchIngredients, obj);
+
+            if (chickenCount != 6) {
+                if (count === 1 && keyWord === "chicken") {
+                    completeRecipe.push(obj);
+
+                    chickenCount++;
+                }
+
+            }
+            if (meatCount != 6) {
+                if (count === 1 && keyWord === "meat") {
+                    completeRecipe.push(obj);
+
+                    meatCount++;
+                }
+
+            }
+            if (seafoodCount != 6) {
+                if (count === 1 && keyWord === "seafood") {
+                    completeRecipe.push(obj);
+
+                    seafoodCount++;
+                }
+
+            }
+            if (vegetableCount != 6) {
+                if (count === 1 && keyWord === "vegetable") {
+                    completeRecipe.push(obj);
+
+                    vegetableCount++;
+                }
+
+            }
         }
-        count = searchArray(searchIngredients, obj);      
-        if(count === 1 || returnValue === 3) {
-            completeRecipe.push(obj);
-            i++;
-            returnValue++;
-        }
-        else{
-            i++;
-        }
-      
-    })
+        console.log(completeRecipe);
+        console.log(completeRecipe[0]);
+        console.log(completeRecipe[0].image);
+        $('#recipe-img-1').attr({
+            name: completeRecipe[0].name,
+            src: completeRecipe[0].image
+        });
+        $('#recipe-img-2').attr({
+            name: completeRecipe[1].name,
+            src: completeRecipe[1].image
+        });
+        $('#recipe-img-3').attr({
+            name: completeRecipe[2].name,
+            src: completeRecipe[2].image
+        });
+        $('#recipe-img-4').attr({
+            name: completeRecipe[3].name,
+            src: completeRecipe[3].image
+        });
+        $('#recipe-img-5').attr({
+            name: completeRecipe[4].name,
+            src: completeRecipe[4].image
+        });
+        $('#recipe-img-6').attr({
+            name: completeRecipe[5].name,
+            src: completeRecipe[5].image
+        });
+    }
+    )
     console.log(completeRecipe);
-    return returnValue;
+
 }// end apicall
+
 
 
 
@@ -319,38 +400,33 @@ function count(u, v){
 function generalSearch(userinput){
     
 
-    if(chickenCount !=3){
+    if(chickenCount !=6){
         //call api
-        chickenCount = apiCall("chicken", userinput);
+        apiCall("chicken", userinput);
         offset++;
 
     }
 
-    if(meatCount !=3){
+    if(meatCount !=6){
         //call api
-        meatCount = apiCall("meat", userinput);
-        offset++;
-
-    }
-    if(seafoodCount !=3){
-        //call api
-        seafoodCount = apiCall("seafood", userinput);
-        offset++;
-    }
-
-    if(vegetableCount !=3){
-        //call api
-        vegetableCount = apiCall("vegetables", userinput);
+        apiCall("meat", userinput);
         offset++;
 
     }
 
-    
+    if(seafoodCount !=6){
+        //call api
+        apiCall("seafood", userinput);
+        offset++;
+    }
+
+    if(vegetableCount !=6){
+        //call api
+        apiCall("vegetable", userinput);
+        offset++;
+
+    } 
 }
-
-
-console.log(completeRecipe);
-
 
 $('#search-button').on("click",function(){
 
@@ -361,5 +437,23 @@ $('#search-button').on("click",function(){
     console.log(userInput);
     generalSearch(userArray);
 
-})
+});
 
+// code to sign the user out when clicking on the log out link, redirects to login page after signing the user out of firebase
+var dialog = document.querySelector('dialog');
+var showDialogButton = document.querySelector('#show-dialog');
+if (!dialog.showModal) {
+    dialogPolyfill.registerDialog(dialog);
+}
+showDialogButton.addEventListener('click', function () {
+    dialog.showModal();
+});
+dialog.querySelector('.close').addEventListener('click', function () {
+    firebase.auth().signOut().then(function() {
+        console.log('Signed Out');
+      }, function(error) {
+        console.error('Sign Out Error', error);
+      });
+      console.log(user);
+    window.open('index.html', '_self');
+});
