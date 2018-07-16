@@ -26,7 +26,8 @@ footer {
     margin-left: 240px;
 }
 #edamam-badge {
-    margin: 0 auto;
+    margin-left: 675px;
+    margin-top: 7px;
 }
 .container {
     margin: 0 auto;
@@ -57,4 +58,11 @@ h3 {
 }
 #menu {
     margin-left: 240px;
+}
+.material-icons {
+    color: rgb(115, 190, 1);
+}
+.bigContainer {
+    height: fit-content;
+    margin-bottom: 100px;
 }
