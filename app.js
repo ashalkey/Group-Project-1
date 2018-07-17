@@ -233,7 +233,7 @@ function generalSearch(userinput){
 
     if(chickenCount !=3){
         //call api
-        apiCall("chiken", userinput);
+        apiCall("chicken", userinput);
 
         //count+1;
     }

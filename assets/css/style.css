@@ -1,3 +1,6 @@
+body {
+    background-image: url("felt.png");
+}
 #player {
     margin-bottom: 100px;
     margin-top: 50px;
@@ -12,7 +15,7 @@
 }
 h2 {
     text-align: center;
-    color: rgb(115, 190, 1);
+    color: rgb(17, 194, 1);
 }
 .sideBar {
     float: left;
